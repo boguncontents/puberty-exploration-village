@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>비밀기록 서고 | 미션 2 완성본</title>
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;width:100%;height:100%;overflow:hidden}
+  body{font-family:"Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;background:#3c261b;color:#4d2c17}
+  [hidden]{display:none !important}
+
+  #scene{
+    position:relative;width:100%;height:100svh;overflow:hidden;
+    background:#4f301f url("assets/libbg.png") center center / cover no-repeat;
+  }
+  #scene::before{
+    content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(36,18,11,.10),rgba(28,15,10,.16));pointer-events:none;
+  }
+
+  /* 공통 사서 인트로 배치: 앞서 승인된 기준 유지 */
+  .intro-layout{
+    position:absolute;left:50%;top:50%;transform:translate(-50%,-46%);
+    width:min(95vw,1240px);
+    display:grid;grid-template-columns:minmax(0,26fr) minmax(0,74fr);
+    align-items:end;column-gap:0;z-index:4;
+  }
+  .librarian{
+    width:100%;height:auto;max-height:min(59vh,540px);object-fit:contain;
+    object-position:bottom right;filter:drop-shadow(0 9px 11px rgba(38,24,16,.35));
+    transform:translateX(-5%) scale(1.22);transform-origin:88% 100%;align-self:end;z-index:3;
+  }
+  .mission2-popup{
+    position:relative;width:100%;min-height:min(51vh,500px);display:flex;align-items:center;justify-content:center;
+  }
+  .mission2-card{
+    position:relative;width:93%;height:74%;min-height:0;
+    display:flex;flex-direction:column;align-items:center;justify-content:space-evenly;
+    padding:clamp(14px,2vw,29px) clamp(14px,2.4vw,33px);
+    border:clamp(4px,.53vw,7px) solid #a76c32;
+    outline:2px solid rgba(255,237,189,.91);outline-offset:-13px;
+    border-radius:clamp(18px,2.1vw,29px);
+    background:linear-gradient(160deg,#fff9e9 2%,#fff1d2 70%,#f9e5c1 100%);
+    box-shadow:0 17px 28px rgba(27,12,8,.46),inset 0 2px 0 #fffdf2,inset 0 0 28px rgba(210,155,68,.13);
+    color:#56321d;text-align:center;isolation:isolate;
+  }
+  .mission2-card::before,.mission2-card::after{content:'✦';position:absolute;top:12%;font-size:clamp(15px,1.8vw,27px);color:#c38a43}
+  .mission2-card::before{left:5%}.mission2-card::after{right:5%}
+  .mission2-eyebrow{color:#99612c;font-weight:900;font-size:clamp(12px,1.1vw,17px);line-height:1.2;letter-spacing:.04em}
+  .mission2-title{margin:0;font-size:clamp(23px,2.45vw,34px);font-weight:1000;line-height:1.17;letter-spacing:-.04em;word-break:keep-all}
+  .mission2-rule{width:70%;height:2px;background:linear-gradient(90deg,transparent,#d2a566,transparent)}
+  .mission2-message{margin:0;display:flex;align-items:center;justify-content:center;font-size:clamp(17px,1.67vw,23px);font-weight:850;line-height:1.42;letter-spacing:-.035em;word-break:keep-all}
+  .mission2-action{
+    display:flex;align-items:center;justify-content:center;
+    min-height:clamp(42px,6.0vh,64px);width:min(79%,410px);padding:6px 12px;
+    border:3px solid #d29d5d;border-radius:999px;background:linear-gradient(#a46b38,#78401f);color:#fff9e9;
+    font-family:inherit;font-weight:900;font-size:clamp(17px,1.5vw,22px);line-height:1.2;
+    box-shadow:0 4px 0 #502c19,0 7px 12px #24120c48;cursor:pointer;touch-action:manipulation;
+  }
+  .mission2-action:hover{filter:brightness(1.08)}
+  .mission2-action:focus-visible{outline:4px solid #765034;outline-offset:3px}
+  .mission2-action:active{transform:translateY(2px);box-shadow:0 2px 0 #502c19}
+
+  /* 퀴즈 화면 */
+  #quiz-view{
+    position:absolute;inset:0;display:grid;
+    grid-template-rows:minmax(0,12fr) minmax(0,9fr) minmax(0,73fr) minmax(0,6fr);
+    padding:max(6px,env(safe-area-inset-top)) 1.8vw max(5px,env(safe-area-inset-bottom));
+    justify-items:center;align-items:center;
+  }
+  #instruction{
+    background:linear-gradient(155deg,#fff8e4,#f9e7c0);border:3px solid #bc8546;box-shadow:0 5px 17px #0005;border-radius:18px;
+    width:min(72vw,950px);max-width:calc(100% - 12px);height:clamp(62px,10vh,96px);max-height:100%;
+    display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px;text-align:center;padding:3px 13px;
+  }
+  #instruction small{color:#8d5425;font-size:clamp(13px,1.18vw,18px);font-weight:900}
+  #instruction strong{font-size:clamp(18px,1.95vw,28px);font-weight:950;word-break:keep-all;line-height:1.18}
+  #quiet-gap{min-height:0;width:100%;pointer-events:none}
+  .sr-only{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+
+  #doc-area{min-width:0;min-height:0;height:100%;width:100%;display:flex;align-items:center;justify-content:center; transform:translateY(-2.7vh)}
+  #doc-frame{
+    position:relative;width:max-content;height:max-content;max-width:100%;max-height:100%;line-height:0;
+    filter:drop-shadow(0 9px 13px #160c0888);transform-origin:center center;
+  }
+  #doc-img{display:block;object-fit:contain;width:auto;height:auto;max-width:min(91vw,1160px);max-height:68svh;user-select:none;-webkit-user-drag:none}
+  /* 원본 발기 고문서는 하단 조각이 잘려 있었음: 동일 승인 고문서 장식으로 미세 보완 */
+  #erection-footer{position:absolute;top:95%;left:0;width:100%;height:auto;display:block;pointer-events:none;user-select:none;-webkit-user-drag:none}
+  #doc-frame:not([data-doc="erection"]) #erection-footer{display:none}
+  .choice{
+    position:absolute;left:21%;width:68%;display:flex;align-items:center;justify-content:flex-start;
+    line-height:1.16;white-space:normal;word-break:keep-all;overflow-wrap:break-word;text-align:left;
+    color:#5c3618;font-size:clamp(15px,1.46vw,21px);font-weight:1000;padding:0 1.4%;margin:0;background:transparent;overflow:hidden;
+    text-shadow:0 1px 0 #fff1d1;border-radius:12px;cursor:pointer;transition:transform .12s, background-color .16s, box-shadow .16s, opacity .22s, filter .22s;
+  }
+  .choice:hover,.choice:focus-visible{background:rgba(255,250,232,.25);box-shadow:0 0 0 2px rgba(255,239,190,.9) inset;outline:0}
+  .choice.disabled{pointer-events:none}
+  .choice.wrong{animation:wrongShake .32s ease; background:rgba(190,45,32,.08); box-shadow:0 0 0 2px rgba(176,52,33,.22) inset}
+  .choice.correct{background:rgba(255,243,205,.32); box-shadow:0 0 0 2px rgba(186,74,48,.55) inset; color:#8d2819}
+  @keyframes wrongShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(3px)}}
+
+  #doc-frame[data-doc="erection"] .choice:nth-of-type(1){top:47%;height:14.9%}
+  #doc-frame[data-doc="erection"] .choice:nth-of-type(2){top:64.3%;height:14.9%}
+  #doc-frame[data-doc="erection"] .choice:nth-of-type(3){top:81.8%;height:14.9%}
+  #doc-frame[data-doc="ejaculation"] .choice:nth-of-type(1),
+  #doc-frame[data-doc="wetdream"] .choice:nth-of-type(1){top:42.4%;height:13.8%}
+  #doc-frame[data-doc="ejaculation"] .choice:nth-of-type(2),
+  #doc-frame[data-doc="wetdream"] .choice:nth-of-type(2){top:58%;height:13.8%}
+  #doc-frame[data-doc="ejaculation"] .choice:nth-of-type(3),
+  #doc-frame[data-doc="wetdream"] .choice:nth-of-type(3){top:73.8%;height:14.5%}
+  #doc-frame[data-doc="ejaculation"] .choice,
+  #doc-frame[data-doc="wetdream"] .choice{font-size:clamp(15px,1.38vw,19px)}
+
+
+  /* 선택한 정답의 글자만 왼쪽부터 위로 증발. 고문서/다른 선택지는 그대로 유지. */
+  .choice.erasing-ink{color:transparent!important;text-shadow:none!important;pointer-events:none}
+  .ink-layer{position:absolute;inset:0;pointer-events:none;overflow:visible;z-index:4}
+  .ink-glyph{
+    position:absolute;white-space:pre;display:block;pointer-events:none;
+    font:inherit;line-height:1.16;color:#963421;
+    text-shadow:0 1px 0 #fff2d9;opacity:1;will-change:opacity,transform,filter;
+    animation:inkRise .58s cubic-bezier(.17,.6,.33,1) both;
+  }
+  @keyframes inkRise{
+    0%{opacity:1;transform:translate3d(0,0,0) scale(1);filter:blur(0)}
+    25%{opacity:.92;transform:translate3d(1px,-6px,0) scale(.99);filter:blur(.2px)}
+    100%{opacity:0;transform:translate3d(8px,-34px,0) scale(.72);filter:blur(4px)}
+  }
+  #doc-frame.doc-exit{opacity:0;transform:translateY(-14px) scale(.97);filter:blur(3px);transition:opacity .43s ease,transform .43s ease,filter .43s ease;pointer-events:none}
+  @media(prefers-reduced-motion:reduce){.ink-glyph{animation-duration:.08s!important;animation-delay:0ms!important}#doc-frame.doc-exit{transition-duration:.10s!important}}
+
+  #footer-hint{color:#fff2d6;font-weight:800;text-shadow:0 2px 4px #2e1916;font-size:clamp(12px,1.1vw,15px);align-self:start}
+
+  /* 정답 팝업/완료 팝업 */
+  #overlay{position:absolute;inset:0;background:rgba(27,15,10,.36);display:flex;align-items:center;justify-content:center;z-index:20;padding:20px}
+  .overlay-card{
+    width:min(90vw,560px);border:4px solid #a76c32;border-radius:26px;background:linear-gradient(160deg,#fff9e9 2%,#fff1d2 70%,#f9e5c1 100%);
+    box-shadow:0 18px 34px rgba(27,12,8,.52), inset 0 2px 0 #fffdf2; color:#56321d;text-align:center;padding:26px 24px 22px;
+  }
+  .overlay-badge{display:inline-block;padding:7px 15px;border-radius:999px;background:#e3c492;color:#70431d;font-weight:900;font-size:clamp(12px,1vw,15px);margin-bottom:10px}
+  .overlay-title{margin:0 0 12px;font-size:clamp(24px,2.2vw,34px);font-weight:1000;line-height:1.2}
+  .overlay-copy{margin:0 0 18px;font-size:clamp(16px,1.4vw,21px);font-weight:850;line-height:1.45;word-break:keep-all}
+  .overlay-actions{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}
+  .overlay-actions button{
+    min-width:180px;min-height:46px;padding:8px 16px;border:3px solid #d29d5d;border-radius:999px;background:linear-gradient(#a46b38,#78401f);color:#fff9e9;
+    font-family:inherit;font-weight:900;font-size:clamp(15px,1.25vw,19px);cursor:pointer;box-shadow:0 4px 0 #502c19,0 7px 12px #24120c48;
+  }
+  .overlay-actions button.secondary{background:linear-gradient(#8e7460,#5b4637);border-color:#d6c19e}
+  .overlay-actions button:active{transform:translateY(2px);box-shadow:0 2px 0 #502c19}
+
+  /* 미션2를 마친 뒤에만 보여 주는 기존 2구역 열쇠 보상 그림. */
+  #key-reward{
+    position:absolute;inset:0;z-index:25;
+    display:flex;align-items:center;justify-content:center;
+    padding:max(10px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right))
+            max(10px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left));
+    background:rgba(28,13,10,.36);
+  }
+  .key-art-frame{position:relative;width:min(94vw,610px,calc(90dvh * 664 / 853));max-height:90dvh;height:auto;aspect-ratio:664/853;filter:drop-shadow(0 16px 22px rgba(31,13,8,.5));flex-shrink:0}
+  .key-art-frame>img{width:100%;height:100%;display:block;object-fit:contain}
+  #return-to-map{
+    position:absolute;left:23%;top:83.6%;width:54%;height:9.6%;
+    border:0;background:transparent;border-radius:999px;cursor:pointer;
+    touch-action:manipulation;
+  }
+  #return-to-map:focus-visible{outline:4px solid #fff7ad;outline-offset:2px}
+  #map-note{position:absolute;left:50%;bottom:3%;transform:translateX(-50%);width:min(90vw,520px);
+    z-index:3;padding:10px;border:2px solid #a96a2f;border-radius:12px;
+    background:#fff6de;color:#56341b;text-align:center;font-weight:850;line-height:1.4;
+    box-shadow:0 4px 12px #20110866}
+
+  @media(max-aspect-ratio:1.22){
+    .intro-layout{width:99vw;transform:translate(-50%,-50%);grid-template-columns:minmax(0,23fr) minmax(0,77fr)}
+    .librarian{transform:translateX(-1%) scale(1.15)}
+    .mission2-card{height:78%;padding:9px 11px}
+    .mission2-title{font-size:clamp(16px,2.3vw,26px)}
+    .mission2-message{font-size:clamp(12px,1.8vw,18px)}
+    #instruction{width:86vw}
+  }
+  @media(max-height:720px){
+    #instruction{height:clamp(54px,10vh,80px)}
+    #instruction small{font-size:clamp(11px,1.05vw,15px)}
+    #instruction strong{font-size:clamp(15px,1.65vw,22px)}
+    #doc-img{max-height:70svh}
+    .choice{font-size:clamp(13px,1.3vw,18px)}
+    #doc-frame[data-doc="ejaculation"] .choice,
+    #doc-frame[data-doc="wetdream"] .choice{font-size:clamp(12px,1.25vw,17px)}
+  }
+  @media(prefers-reduced-motion:reduce){
+    .choice,.mission2-action,#doc-img{transition:none !important;animation:none !important}
+  }
+</style>
+</head>
+<body>
+<main id="scene">
+  <section class="intro-layout" id="mission2-intro" aria-label="사서의 미션 2 안내">
+    <img class="librarian" src="assets/clerk.png" alt="비밀기록 서고 사서">
+    <div class="mission2-popup">
+      <section class="mission2-card" aria-labelledby="mission2-title">
+        <div class="mission2-eyebrow">사서의 두 번째 부탁</div>
+        <h2 class="mission2-title" id="mission2-title">미션 2 · 잘못된 기록 찾기</h2>
+        <div class="mission2-rule" aria-hidden="true"></div>
+        <p class="mission2-message">책을 모두 잘 찾아주었군요!<br>사춘기와 관련된 오래된 문서를 발견했어요!<br>고문서 속 잘못된 설명을 찾아 주세요.</p>
+        <button type="button" class="mission2-action" id="start-mission2">기록 살펴보기 ▶</button>
+      </section>
+    </div>
+  </section>
+
+  <section id="quiz-view" aria-label="미션 2 잘못된 기록 찾기" hidden>
+    <header id="instruction">
+      <small id="step-text">미션 2 · 잘못된 기록 찾기 1 / 3</small>
+      <strong id="header-text">고문서 속 잘못된 설명을 하나 찾아주세요!</strong>
+    </header>
+    <div id="quiet-gap" aria-hidden="true"></div>
+    <p id="sr-feedback" class="sr-only" role="status" aria-live="polite"></p>
+    <div id="doc-area">
+      <div id="doc-frame" data-doc="erection">
+        <img id="doc-img" src="assets/p_erec.png" alt="발기 고문서">
+        <img id="erection-footer" src="assets/p_foot.png" alt="" aria-hidden="true">
+      </div>
+    </div>
+    <div id="footer-hint" aria-hidden="true"></div>
+  </section>
+
+  <section id="key-reward" aria-label="미션 2 완료, 두 번째 성장의 열쇠" hidden>
+    <div class="key-art-frame">
+      <img src="assets/key2.webp" alt="비밀기록 서고 탐험 완료, 두 번째 성장의 열쇠 보상창">
+      <button id="return-to-map" type="button" aria-label="마을지도로 돌아가기"></button>
+    </div>
+    <div id="map-note" role="status" hidden>이 창을 2구역 통합 화면에서 열면 마을지도로 돌아갈 수 있어요.</div>
+  </section>
+
+  <div id="overlay" hidden>
+    <div class="overlay-card">
+      <div class="overlay-badge" id="overlay-badge">정답 확인</div>
+      <h2 class="overlay-title" id="overlay-title">정답이에요!</h2>
+      <p class="overlay-copy" id="overlay-copy">잘못된 기록을 찾아냈어요.</p>
+      <div class="overlay-actions" id="overlay-actions">
+        <button id="overlay-primary" type="button">다음 고문서 보기 ▶</button>
+
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+const docs = [
+  {
+    key:'erection',
+    title:'발기',
+    image:'assets/p_erec.png',
+    alt:'발기 고문서',
+    lines:[
+      '음경에 혈액이 몰리면서 커지고 단단해지는 현상이다.',
+      '사춘기에 나타날 수 있는 자연스러운 신체 변화이다.',
+      '발기는 잠을 잘 때에만 나타나는 변화이다.'
+    ],
+    wrongIndex:2,
+    correction:'발기는 잠을 잘 때에만 나타나는 것이 아니에요. 깨어 있을 때에도 자연스럽게 나타날 수 있어요.'
+  },
+  {
+    key:'ejaculation',
+    title:'사정',
+    image:'assets/p_ejac.png',
+    alt:'사정 고문서',
+    lines:[
+      '음경이 커지고 단단해지는 현상이다.',
+      '정액이 몸 밖으로 나오는 현상이다.',
+      '사춘기 이후 나타날 수 있는 자연스러운 변화이다.'
+    ],
+    wrongIndex:0,
+    correction:'음경이 커지고 단단해지는 것은 발기에 대한 설명이에요. 사정은 정액이 몸 밖으로 나오는 현상이에요.'
+  },
+  {
+    key:'wetdream',
+    title:'몽정',
+    image:'assets/p_wet.png',
+    alt:'몽정 고문서',
+    lines:[
+      '주로 잠을 자는 동안 자신도 모르게 정액이 나오는 현상이다.',
+      '몽정은 몸에 이상이 있다는 뜻이다.',
+      '사춘기에 나타날 수 있는 자연스러운 변화이다.'
+    ],
+    wrongIndex:1,
+    correction:'몽정은 몸에 이상이 있다는 뜻이 아니에요. 사춘기에 나타날 수 있는 자연스러운 신체 변화예요.'
+  }
+];
+
+let current = 0;
+let locked = false;
+let pendingAction = null;
+
+const intro = document.getElementById('mission2-intro');
+const quiz = document.getElementById('quiz-view');
+const stepText = document.getElementById('step-text');
+const headerText = document.getElementById('header-text');
+const srFeedback = document.getElementById('sr-feedback');
+const docFrame = document.getElementById('doc-frame');
+const docImg = document.getElementById('doc-img');
+const overlay = document.getElementById('overlay');
+const overlayBadge = document.getElementById('overlay-badge');
+const overlayTitle = document.getElementById('overlay-title');
+const overlayCopy = document.getElementById('overlay-copy');
+const overlayPrimary = document.getElementById('overlay-primary');
+
+function announce(message){srFeedback.textContent=message;}
+
+function clearChoices(){
+  docFrame.querySelectorAll('.choice').forEach(el => el.remove());
+}
+
+function renderDoc(index){
+  const doc = docs[index];
+  current = index;
+  locked = false;
+  clearChoices();
+  docFrame.classList.remove('doc-exit');
+  docFrame.dataset.doc = doc.key;
+  docImg.src = doc.image;
+  docImg.alt = doc.alt;
+  stepText.textContent = `미션 2 · 잘못된 기록 찾기 ${index + 1} / ${docs.length}`;
+  headerText.textContent = '고문서 속 잘못된 설명을 하나 찾아주세요!';
+  announce(`“${doc.title}” 고문서를 읽고 잘못된 설명 하나를 눌러 보세요.`);
+
+  doc.lines.forEach((text, i) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'choice';
+    btn.textContent = text;
+    btn.setAttribute('aria-label', `${i+1}번 선택지`);
+    btn.dataset.index = i;
+    btn.addEventListener('click', () => onChoiceClick(i, btn));
+    docFrame.appendChild(btn);
+  });
+}
+
+function disableChoices(){
+  docFrame.querySelectorAll('.choice').forEach(el => el.classList.add('disabled'));
+}
+
+function onChoiceClick(index, el){
+  if(locked) return;
+  const doc = docs[current];
+  if(index !== doc.wrongIndex){
+    el.classList.remove('wrong');
+    void el.offsetWidth;
+    el.classList.add('wrong');
+    announce('아직 잘못된 기록을 찾지 못했어요. 다시 읽어 보세요.');
+    return;
+  }
+  locked = true;
+  disableChoices();
+  el.classList.add('correct');
+  announce('정답이에요! 잘못된 기록을 찾았어요.');
+  playEvaporateSequence(el);
+}
+
+function playEvaporateSequence(selectedButton){
+  // 선택지의 실제 글자 범위 좌표를 측정하므로 승인된 문장 위치/줄바꿈이 그대로 유지됩니다.
+  // 다른 두 선택지와 고문서 이미지는 이 단계에서 절대 숨기지 않습니다.
+  const textNode = Array.from(selectedButton.childNodes).find(n => n.nodeType === Node.TEXT_NODE);
+  const raw = textNode?.textContent || '';
+  const buttonRect = selectedButton.getBoundingClientRect();
+  const glyphLayer = document.createElement('span');
+  glyphLayer.className='ink-layer';
+  glyphLayer.setAttribute('aria-hidden','true');
+  const glyphs=[];
+  let offset=0;
+  for(const character of Array.from(raw)){
+    const start=offset;
+    offset+=character.length;
+    if(!character.trim())continue;
+    const range=document.createRange();
+    range.setStart(textNode,start);
+    range.setEnd(textNode,offset);
+    const rect=range.getBoundingClientRect();
+    if(rect.width<=0 || rect.height<=0)continue;
+    const glyph=document.createElement('span');
+    glyph.className='ink-glyph';
+    glyph.textContent=character;
+    glyph.style.left=(rect.left-buttonRect.left)+'px';
+    glyph.style.top=(rect.top-buttonRect.top)+'px';
+    glyph.style.fontSize=getComputedStyle(selectedButton).fontSize;
+    glyph.style.fontWeight=getComputedStyle(selectedButton).fontWeight;
+    glyph.style.fontFamily=getComputedStyle(selectedButton).fontFamily;
+    glyph.style.letterSpacing=getComputedStyle(selectedButton).letterSpacing;
+    glyphLayer.appendChild(glyph);
+    glyphs.push({glyph,x:rect.left-buttonRect.left,y:rect.top-buttonRect.top});
+  }
+  // 화면 왼쪽 글자부터 흐려지며 위로 솟아오릅니다. 두 줄이어도 왼쪽을 우선합니다.
+  glyphs.sort((a,b)=>a.x-b.x || a.y-b.y);
+  const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const delayStep=reduce?0:43;
+  glyphs.forEach((item,i)=>{item.glyph.style.animationDelay=(i*delayStep)+'ms';});
+  selectedButton.appendChild(glyphLayer);
+  selectedButton.classList.add('erasing-ink');
+  const timeForInk=reduce?150:Math.max(560,glyphs.length*delayStep+660);
+  window.setTimeout(()=>{
+    // 정답 글자가 전부 사라진 뒤에만 고문서 + 나머지 선택지 전체를 함께 퇴장
+    docFrame.classList.add('doc-exit');
+    window.setTimeout(showCorrectPopup,reduce?140:480);
+  },timeForInk);
+}
+
+function showCorrectPopup(){
+  const isLast = current === docs.length - 1;
+  overlay.hidden = false;
+  // 세 번째 정답도 반드시 해당 고문서의 해설을 먼저 보여 줍니다.
+  overlayBadge.textContent = isLast ? '정답 확인 · 3 / 3' : '정답 확인';
+  overlayTitle.textContent = '잘못된 설명을 찾았어요!';
+  overlayCopy.textContent = docs[current].correction;
+  overlayPrimary.textContent = isLast ? '미션 완료 ▶' : '다음 고문서 보기 ▶';
+  pendingAction = isLast ? 'reward' : 'next';
+}
+
+function hideOverlay(){ overlay.hidden = true; }
+
+overlayPrimary.addEventListener('click', () => {
+  if(pendingAction === 'next'){
+    hideOverlay();
+    renderDoc(current + 1);
+  }else if(pendingAction === 'reward'){
+    hideOverlay();
+    quiz.hidden = true;
+    document.getElementById('key-reward').hidden = false;
+  }
+});
+
+// 마을 지도의 실제 경로가 있는 통합 배포에서만 지도 이동.
+// 단독 검수에서는 잘못된 경로로 이동하지 않도록 안내만 표시합니다.
+document.getElementById('return-to-map').addEventListener('click',()=>{
+  if(window.parent!==window){
+    window.parent.postMessage({type:'puberty-zone2-return'},'*');
+  }else{
+    document.getElementById('map-note').hidden=false;
+  }
+});
+
+document.getElementById('start-mission2').addEventListener('click', () => {
+  intro.hidden = true;
+  quiz.hidden = false;
+  renderDoc(0);
+});
+
+// direct preview support
+if(new URLSearchParams(location.search).get('start') === 'quiz'){
+  intro.hidden = true;
+  quiz.hidden = false;
+  renderDoc(0);
+}
+</script>
+</body>
+</html>
