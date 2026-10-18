@@ -1,0 +1,178 @@
+/* Puberty Village 2.0 — shared interface system. Safe, additive pass. */
+:root {
+ --v-ui-font:"Malgun Gothic","Apple SD Gothic Neo",system-ui,sans-serif;
+ --v-panel:#fff8e7;
+ --v-panel-edge:#d6aa72;
+ --v-ink:#3e2c26;
+ --v-accent:#206c87;
+ --v-accent-dark:#124962;
+ --v-radius:22px;
+ --v-stage-height:930px;
+ --v-pop-gutter:24px;
+ --v-btn-height:54px;
+ --v-pop-shadow:0 9px 0 rgba(48,36,28,.34),0 22px 42px rgba(12,24,38,.26);
+}
+:where(body,button,input,textarea){font-family:var(--v-ui-font)}
+:where(button,a,[role="button"]):focus-visible{outline:4px solid #46b5f2!important;outline-offset:3px}
+/* Same visual shell for the FOUR character introductions, without relocating character art. */
+#tablet-virtual-screen .scene.intro-active .intro-copy,
+#introBank .introText,
+.game.stage-guide #modal .content,
+#welcome .intro-panel{
+ box-sizing:border-box!important;
+ font-family:var(--v-ui-font)!important;
+ border-radius:var(--v-radius)!important;
+ background:var(--v-panel)!important;
+ color:var(--v-ink)!important;
+ border:4px solid var(--v-panel-edge)!important;
+ box-shadow:var(--v-pop-shadow)!important;
+}
+#tablet-virtual-screen .scene.intro-active .intro-copy h2,
+#introBank .introText h2,
+.game.stage-guide #modal-title,
+#welcome .intro-panel h2{
+ font-family:var(--v-ui-font)!important;
+ line-height:1.32!important;
+ font-weight:900!important;
+ overflow-wrap:anywhere;
+}
+#tablet-virtual-screen .scene.intro-active .intro-copy p,
+#introBank .introText p,
+.game.stage-guide #modal .content p,
+#welcome .intro-panel p{
+ font-family:var(--v-ui-font)!important;
+ line-height:1.48!important;
+ overflow-wrap:break-word;
+}
+/* The virtual viewport height is supplied by shared/ui.js, not guessed from Safari's vh. */
+#tablet-virtual-screen #modal.modalwrap .modal,
+#bankMasterFinish .officialBankReward,
+#masterKeyFinish .masterPanel,
+#zone3Reward .zone3-official-reward,
+#zone4Reward .zone4-official-reward{
+ box-sizing:border-box!important;
+ max-height:calc(var(--v-stage-height) - 2 * var(--v-pop-gutter))!important;
+ overflow-y:auto;
+ overscroll-behavior:contain;
+}
+/* One consistent touch/focus rhythm, leaving each game's positions unchanged. */
+#begin,#switch,#finish,#restart,#close,#timePlay,#timeAgain,
+#introStart,#openVault,#bankKeyDone,
+#enter,#next,#check,#rewardNext,
+#start,#next-visitor,#zone4RewardNext{
+ font-family:var(--v-ui-font)!important;
+ font-weight:850!important;
+ min-height:var(--v-btn-height);
+ touch-action:manipulation;
+ -webkit-tap-highlight-color:transparent;
+}
+:where(#begin,#switch,#finish,#restart,#close,#timePlay,#timeAgain,#introStart,#openVault,#bankKeyDone,#enter,#next,#check,#rewardNext,#start,#next-visitor,#zone4RewardNext):not(:disabled):active{filter:brightness(.95);}
+@media (prefers-reduced-motion:reduce){:where(#begin,#switch,#finish,#restart,#close,#timePlay,#timeAgain,#introStart,#openVault,#enter,#next,#check,#start,#next-visitor){transition-duration:0s!important;animation-duration:0s!important}}
+/* ZONE 1: replace the broken/cropped wooden board with a separate, ratio-stable digital screen. */
+#tablet-virtual-screen .scene #game .board-scroll{
+ display:flex!important;justify-content:center!important;align-items:flex-start!important;
+ overflow:hidden!important;min-height:0!important;
+ background:transparent!important;
+}
+#tablet-virtual-screen .scene #game #board.board{
+ min-width:0!important;max-width:none!important;flex:none!important;
+ position:relative!important;aspect-ratio:1420 / 510!important;
+ background:#071f35 url('../assets/board.svg') center / 100% 100% no-repeat!important;
+ border:0!important;border-radius:24px!important;
+ box-shadow:0 8px 25px rgba(2,14,30,.42)!important;
+}
+#tablet-virtual-screen .scene #game #board .drop{
+ overflow:hidden!important; box-sizing:border-box!important;
+ padding:3px!important; background:rgba(9,32,55,.32)!important;
+ border:2px dashed rgba(137,226,247,.58)!important;
+ border-radius:11px!important;
+ color:#c7f5ff!important; touch-action:manipulation;
+}
+#tablet-virtual-screen .scene #game #board .drop.picture{
+ top:20.22941%!important;height:32.01961%!important;
+}
+#tablet-virtual-screen .scene #game #board .drop.description{
+ top:55.45098%!important;height:21.57843%!important;
+}
+#tablet-virtual-screen .scene #game #board .drop.picture:not(.good)::before{
+ content:'+  그림 데이터';font:800 17px var(--v-ui-font);pointer-events:none;
+}
+#tablet-virtual-screen .scene #game #board .drop.description:not(.good)::before{
+ content:'+  설명 데이터';font:800 17px var(--v-ui-font);pointer-events:none;
+}
+#tablet-virtual-screen .scene #game #board .drop.good{
+ background:#ecf9ff!important;
+ border:2px solid #9efbd4!important;
+ box-shadow:0 0 0 2px rgba(125,247,213,.25)!important;
+}
+#tablet-virtual-screen .scene #game #board .drop.good.picture img{
+ width:100%!important;height:100%!important;margin:0!important;
+ background:#f9fcff!important;object-fit:contain!important;border:0!important;
+}
+#tablet-virtual-screen .scene #game #board .drop.good.description span{
+ box-sizing:border-box!important;width:100%!important;height:100%!important;
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ color:#17334a!important;background:#f8fdff!important;
+ border:0!important;margin:0!important;padding:5px 8px!important;
+ font:750 17px/1.34 var(--v-ui-font)!important;
+}
+#tablet-virtual-screen .scene #game #board .drop.hover{border-color:#ffe790!important;background:#2b6f92!important}
+/* A digital card tray, styled separately from the research-lab background. */
+#tablet-virtual-screen .scene #game .dock{
+ border:4px solid #5fbbe0!important;border-radius:18px!important;
+ background:linear-gradient(135deg,#17435f,#0b283e)!important;
+ box-shadow:0 6px 0 #09283a,0 11px 24px #09283a55!important;
+ color:#f2fbff!important;
+}
+#tablet-virtual-screen .scene #game .dockhead{color:#f0fbff!important;}
+#tablet-virtual-screen .scene #game .card{
+ border-color:#a4d7f1!important;border-radius:12px!important;
+ box-shadow:0 4px 0 #06334a!important;
+}
+#tablet-virtual-screen .scene #game .card.selected{outline-color:#fff49d!important;}
+
+/* Protect the entire final action row from the 16px padded scene and Safari bottom crop. */
+#tablet-virtual-screen .scene #game:not(.hidden){height:815px!important;}
+
+/* ONE-STEP MISSION 1 COMPLETION: full set of restored files triggers one centered popup.
+   The old bottom-of-screen finish control has intentionally been removed. */
+#tablet-virtual-screen .scene #end.finish{
+ position:absolute!important;inset:0!important;z-index:6000!important;
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ width:100%!important;height:100%!important;max-width:none!important;
+ margin:0!important;padding:28px!important;border:0!important;border-radius:0!important;
+ background:rgba(7,24,41,.76)!important;box-shadow:none!important;
+ overflow:hidden!important;
+}
+#tablet-virtual-screen .scene #end.finish.hidden{display:none!important;}
+#tablet-virtual-screen .scene #end .finish-card{
+ box-sizing:border-box;width:min(800px,100%);max-height:calc(var(--v-stage-height) - 64px);
+ overflow:auto;overscroll-behavior:contain;
+ display:flex;align-items:center;flex-direction:column;gap:22px;
+ padding:46px 46px 42px;border:5px solid #71cde7;border-radius:26px;
+ background:linear-gradient(157deg,#f5fdff 0%,#d9f4ff 100%);
+ box-shadow:0 8px 0 #14637f,0 28px 50px rgba(3,11,25,.5);
+ color:#124361;text-align:center;
+}
+#tablet-virtual-screen .scene #end .finish-check{
+ display:grid;place-items:center;width:102px;height:102px;flex:none;
+ border:5px solid #b9f6ff;border-radius:50%;color:white;
+ background:linear-gradient(155deg,#59d0b7,#188c8f);font-size:68px;font-weight:900;
+ box-shadow:0 7px 0 #197486,0 13px 24px #0a385a44;
+}
+#tablet-virtual-screen .scene #end .finish-card h2{
+ font:900 43px/1.22 var(--v-ui-font)!important;margin:0!important;color:#174b68;
+}
+#tablet-virtual-screen .scene #end .finish-card p{
+ font:700 29px/1.52 var(--v-ui-font)!important;margin:0!important;color:#244e60;
+}
+#tablet-virtual-screen .scene #end .finish-card p b{font-weight:900;color:#155f88;}
+#tablet-virtual-screen .scene #end .finish-card #restart{
+ box-sizing:border-box;min-height:78px!important;max-width:100%;
+ border:3px solid #d4f9ff;border-radius:18px;padding:18px 36px!important;
+ font:900 30px/1.3 var(--v-ui-font)!important;color:white;
+ background:linear-gradient(#47bbd7,#177aab);
+ box-shadow:0 6px 0 #10537a,0 11px 20px #0e40603d;
+ cursor:pointer;
+}
+#tablet-virtual-screen .scene #end .finish-card #restart:hover{filter:brightness(1.06)}
