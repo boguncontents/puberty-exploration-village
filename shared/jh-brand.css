@@ -1,0 +1,18 @@
+/* 보건플레이랩 by JH Studio — 브랜드 요소만 추가; 기존 게임 레이아웃 불변 */
+.jh-brand-map{position:absolute;left:50%;bottom:1.15%;transform:translateX(-50%);width:min(29%,285px);min-height:20px;display:flex;align-items:center;justify-content:center;gap:7px;z-index:8;pointer-events:none;isolation:isolate}
+.jh-brand-map img{width:64%;min-width:0;height:auto;display:block;object-fit:contain;pointer-events:none}
+.jh-brand-map .jh-brand-info{flex:none;pointer-events:auto;font:600 clamp(9px,1.05vw,12px)/1.15 system-ui,'Malgun Gothic',sans-serif;white-space:nowrap;border:1px solid rgba(242,237,255,.78);color:#fff;background:rgba(37,28,78,.79);border-radius:999px;padding:5px 8px;cursor:pointer;box-shadow:0 1px 5px #0008}
+.jh-brand-map .jh-brand-info:focus-visible{outline:2px solid #fff4ab;outline-offset:2px}
+.jh-brand-game{position:fixed;right:max(7px,env(safe-area-inset-right));bottom:max(6px,env(safe-area-inset-bottom));z-index:90;color:rgba(255,255,255,.66);font:500 10px/1.2 system-ui,'Malgun Gothic',sans-serif;text-shadow:0 1px 4px #151520bb;pointer-events:none;user-select:none}
+.jh-brand-overlay{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;padding:14px;background:rgba(16,12,40,.63)}
+.jh-brand-overlay.open{display:flex}
+.jh-brand-dialog{position:relative;box-sizing:border-box;width:min(92vw,620px);max-height:min(88dvh,700px);overflow-y:auto;border:4px solid #b998f3;border-radius:25px;background:#fff;padding:24px 22px 21px;color:#131541;box-shadow:0 14px 42px #100d3975;text-align:center;font:600 clamp(13px,1.45vw,16px)/1.65 system-ui,'Malgun Gothic',sans-serif}
+.jh-brand-dialog::before{content:'';position:absolute;inset:6px;border:1px solid #e3d7ff;border-radius:18px;pointer-events:none}
+.jh-brand-dialog img{display:block;width:min(76%,380px);height:auto;margin:0 auto 13px}
+.jh-brand-dialog h2{margin:0 auto 18px;max-width:94%;font-size:clamp(19px,2.5vw,26px);line-height:1.4;padding:5px 14px;border-radius:18px;background:#e4ceff}
+.jh-brand-dialog p{margin:12px 0}
+.jh-brand-dialog .jh-warning{background:#fce5ef;border-radius:17px;padding:14px 17px;margin:19px 0 15px;text-align:left}
+.jh-brand-dialog small{display:block;margin-top:12px;font-size:12px}
+.jh-brand-dialog .jh-close{position:absolute;right:8px;top:4px;z-index:2;border:0;background:transparent;color:#2a1259;font:500 33px/1 system-ui,sans-serif;padding:4px 8px;cursor:pointer}
+.jh-brand-dialog .jh-close:focus-visible{outline:2px solid #493080;border-radius:6px}
+@media(max-width:600px){.jh-brand-map{width:min(37%,230px);gap:4px}.jh-brand-map .jh-brand-info{font-size:9px;padding:4px 5px}.jh-brand-dialog{padding:20px 12px 17px}.jh-brand-dialog h2{margin-bottom:10px}.jh-brand-dialog .jh-warning{padding:10px}}
